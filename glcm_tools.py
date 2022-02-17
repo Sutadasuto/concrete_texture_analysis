@@ -71,3 +71,12 @@ def get_glcm_features(glcm, props, avg_and_range=False):
                      idx * glcm.shape[2] * glcm.shape[3] + glcm.shape[2] * glcm.shape[3]] = f.flatten('F')
 
     return features[None, ...]
+
+
+def get_glcm_feature_names(distances, angles, props):
+    glcm_feature_names = []
+    for prop in props:
+        for angle in angles:
+            for distance in distances:
+                glcm_feature_names.append("glcm_{:03d}px_{:03d}deg_{}".format(distance, int(angle * 180 / math.pi), prop))
+    return glcm_feature_names

@@ -1,13 +1,8 @@
 from glcm_tools import *
+from config import distances, angles, standardize_glcm_image, glcm_levels, props  # GLCM parameters (number_of_features = len(distances) * len(angles) * len(props))
 
 imgs = ["fluid.tiff", "good.tiff", "shark-skin.tiff", "tearing.tiff"]
-
-# GLCM parameters (number_of_features = len(distances) * len(angles) * len(props))
-distances = list(range(1, 42, 10))  # Offset distance
-angles = [0, math.pi/2]  # Offset direction (in radians)
-standardize_glcm_image = True  # Standardize the image so that the GLCM levels correspond to the range [μ-3.1σ, μ+3.1σ] in the input image
-glcm_levels = 11  # Number of intensity bins to calculate the GLCM (the resulting matrix size is glcm_levels×glcm_levels)
-props = ['contrast', 'dissimilarity', 'homogeneity', 'energy', 'correlation']  # Properties to calculate from a GLCM according to scikit-image documentation
+feature_names = get_glcm_feature_names(distances, angles, props)
 
 fig, axs = plt.subplots(3, len(imgs))
 line_types = ['-', '--']
@@ -22,6 +17,7 @@ for ax_idx, img_path in enumerate(imgs):
         n_angles = len(angles)
         for n in range(n_angles):
             f = features[0, idx*len(distances)*n_angles + n*len(distances):idx*len(distances)*n_angles + (n+1)*len(distances)]
+            f_n = feature_names[idx*len(distances)*n_angles + n*len(distances):idx*len(distances)*n_angles + (n+1)*len(distances)]
             axs[0, ax_idx].plot(distances, f,
                                 colors[idx%len(colors)] + line_types[n%n_angles],
                                 label="%s° %s" % (angles[n]*180/math.pi , prop))

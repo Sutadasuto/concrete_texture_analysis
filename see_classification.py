@@ -50,12 +50,14 @@ def save_classification_comparison(clf, X, Y, names, img_dir, results_dir, prob=
         plt.clf()
 
 
-def save_keras_classification_comparison(clf, X, Y, names, img_dir, results_dir, one_hot_encoder, fig_dim=[480, 720]):
+def save_keras_classification_comparison(clf, X, Y, label_weights, names, img_dir, results_dir, one_hot_encoder, fig_dim=[480, 720]):
 
     if not os.path.exists(results_dir):
         os.makedirs(results_dir)
 
     preds = clf.predict(X)
+    if len(preds.shape) == 1:  # i.e. predicting a single class rather than all class probabilities
+        preds = clf.predict_proba(X)
     Y = one_hot_encoder.inverse_transform(Y)
     class_names = one_hot_encoder.categories_[0]
 
@@ -82,7 +84,7 @@ def save_keras_classification_comparison(clf, X, Y, names, img_dir, results_dir,
         # Display the image.
         plt.imshow(img, cmap="gray", clim=(0, 255))
 
-        plt.title("%s - %s" % (label, name), fontdict={'size': 6})
+        plt.title("%s %s - %s" % (label, label_weights[idx], name), fontdict={'size': 6})
         probs = []
         for j, class_name in enumerate(class_names):
             probs.append("%s: %s" % (class_name, round(pred[j], 2)))

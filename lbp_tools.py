@@ -4,7 +4,7 @@ import numpy as np
 from skimage.feature.texture import local_binary_pattern
 
 
-def region_lbp(image, ps, radii, levels=256, standardize=False):
+def region_lbp(image, radii, ps, levels=256, standardize=False):
 
     if image.dtype != np.uint8:
         image = (255 * image).astype(np.uint8)
@@ -57,3 +57,12 @@ def get_lbp_histograms(lbp, bins):
             hs.append(h)
     features = np.ravel(np.concatenate(hs))[None, ...]
     return features
+
+
+def get_lbp_feature_names(radii, ps, bins):
+    lbp_feature_names = []
+    for p in ps:
+        for radius in radii:
+            for bin in range(bins):
+                lbp_feature_names.append("lbp_radius{:02d}_p{:02d}_bin{:03d}".format(radius, p, bin))
+    return lbp_feature_names

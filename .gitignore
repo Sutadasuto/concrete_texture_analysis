@@ -3,3 +3,4 @@ __pycache*
 /*.png
 /*.json
 /results*
+/*.txt

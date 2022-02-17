@@ -15,7 +15,7 @@ def get_fleiss_kappa_from_csv(path_to_csv):
 
     labels = labels[1:, 1:]  # Remove header and image names
 
-    labels = labels[:, [0, 1, 4]]  # Test with Malo, Rodrigo and Eva's annotations
+    # labels = labels[:, [0, 1, 4]]  # Test with Malo, Rodrigo and Eva's annotations
 
     class_names = np.unique(labels)
     class_names = [name for name in class_names if not "+" in  name]  # Ignore composite classes

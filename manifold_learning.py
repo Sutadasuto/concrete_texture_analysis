@@ -7,7 +7,7 @@ from matplotlib import pyplot as plt
 from sklearn.preprocessing import MinMaxScaler
 
 
-def embedding_techniques_comparison(X, y, names, embeddings, photo_dir=None):
+def embedding_techniques_comparison(X, y, names, embeddings, photo_dir=None, fig_size=(30, 15)):
 
     # Helper function to plot embedding
     def plot_embedding(X, title, ax):
@@ -18,7 +18,7 @@ def embedding_techniques_comparison(X, y, names, embeddings, photo_dir=None):
                 X[y.ravel() == label, 0],
                 X[y.ravel() == label, 1],
                 marker=r"${}$".format(label),
-                s=600,
+                s=int(300 * fig_size[-1] / 15),
                 color=plt.cm.Dark2(labels.index(label)),
                 alpha=0.425,
                 zorder=2,
@@ -35,10 +35,11 @@ def embedding_techniques_comparison(X, y, names, embeddings, photo_dir=None):
                 shown_images = np.concatenate([shown_images, [X[i]]], axis=0)
                 image = plt.imread(os.path.join(photo_dir, names[i,0]))
                 height, width = image.shape
-                ratio = 8/200
+                ratio = 0.25 * fig_size[-1] / 15
                 image = cv2.resize(image, (int(ratio*width), int(ratio*height)))
                 imagebox = offsetbox.AnnotationBbox(
-                    offsetbox.OffsetImage(image, cmap="gray", clim=[0, 255]), X[i]
+                    offsetbox.OffsetImage(image, cmap="gray", clim=[0, 255]),
+                    X[i], bboxprops=dict(edgecolor=plt.cm.Dark2(labels.index(y[i])))
                 )
                 imagebox.set(zorder=1)
                 ax.add_artist(imagebox)
@@ -69,7 +70,7 @@ def embedding_techniques_comparison(X, y, names, embeddings, photo_dir=None):
     # Plot projections
     from itertools import zip_longest
 
-    fig, axs = plt.subplots(nrows=round(len(embeddings)/2.0), ncols=2)
+    fig, axs = plt.subplots(nrows=round(len(embeddings)/2.0), ncols=2, figsize=fig_size, dpi=300)
 
     for name, ax in zip_longest(timing, axs.ravel()):
         if name is None:

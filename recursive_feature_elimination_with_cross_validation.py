@@ -1,23 +1,20 @@
 import matplotlib.pyplot as plt
-import numpy as np
 
-from data import *
 from sklearn.model_selection import StratifiedKFold
 from sklearn.feature_selection import RFECV
 
 
-def get_best_feats(X, y, clf, folds, min_features_to_select, plot=False, step=1):
+def get_best_feats(X, y, clf, folds, min_features_to_select, plot=False, step=1, sample_weights=None):
 
     # The "accuracy" scoring shows the proportion of correct classifications
     rfecv = RFECV(
         estimator=clf,
         step=step,
         cv=StratifiedKFold(folds, shuffle=True, random_state=0),
-        # scoring="accuracy",
         scoring="f1_macro",
         min_features_to_select=min_features_to_select,
     )
-    rfecv.fit(X, y)
+    rfecv.fit(X, y, sample_weights)
 
     print("Optimal number of features : %d" % rfecv.n_features_)
     best_features = rfecv.support_
