@@ -133,6 +133,7 @@ checkpoint = ModelCheckpoint(os.path.join(results_path, weights_file_name), moni
                              mode='min', save_frequency=1)
 clf = KerasClassifier(build_fn=create_model, input_size=X_train.shape[-1], output_size=len(label_names),
                       **training_parameters)
+model = create_model(input_size=X_train.shape[-1], output_size=len(label_names))
 fit_parameters = {'sample_weight': weights_train.ravel(), 'callbacks': [checkpoint, early_stop], 'validation_data': (X_test, y_test),
                   'verbose': 0}
 
@@ -148,7 +149,7 @@ n_queries = 60
 
 
 def get_score(learner, class_encoder, X, y, w=None):
-    y_pred = learner.predict_proba(X)
+    y_pred = learner.predict(X)
     if not w is None:
         score = f1_score(class_encoder.inverse_transform(y), class_encoder.inverse_transform(y_pred), average='macro',
                         sample_weight=w.ravel())
@@ -156,8 +157,8 @@ def get_score(learner, class_encoder, X, y, w=None):
         score = f1_score(class_encoder.inverse_transform(y), class_encoder.inverse_transform(y_pred), average='macro')
     return score
 
-
-scores = [get_score(learner, enc, X_test, y_test, weights_test)]
+model.load_weights(os.path.join(results_path, weights_file_name))
+scores = [get_score(model, enc, X_test, y_test, weights_test)]
 dictOfWords = {i: label_names[i] for i in range(len(label_names))}
 
 X_learn, y_learn = [], []
@@ -232,6 +233,12 @@ for i in range(n_queries):
         fit_parameters['sample_weight'] = weights_train[-1, 0].ravel()
     else:
         fit_parameters['sample_weight'] = weights_train.ravel()
+    # Re-initilize callbacks
+    es = EarlyStopping(monitor='val_loss', mode='min', patience=100, restore_best_weights=True, verbose=0)
+    cp = ModelCheckpoint(os.path.join(results_path, weights_file_name), monitor='val_loss', verbose=0, \
+                                 save_best_only=True, save_weights_only=True, \
+                                 mode='min', save_frequency=1)
+    fit_parameters['callbacks'] = [es, cp]
     learner.teach(query_inst, enc.transform([[y_new]]).toarray(), only_new=only_new, **fit_parameters)  # To discuss
 
     new_labels.append([names_pool[query_idx[0], 0], y_new])
@@ -239,15 +246,27 @@ for i in range(n_queries):
     y_pool = np.delete(y_pool, query_idx[0], axis=0)
     names_pool = np.delete(names_pool, query_idx[0], axis=0)
     weights_pool = np.delete(weights_pool, query_idx[0])
-    scores.append(get_score(learner, enc, X_test, y_test, weights_test))
+    model.load_weights(os.path.join(results_path, weights_file_name))
+    scores.append(get_score(model, enc, X_test, y_test, weights_test))
 
 print('********************************************************************')
 print('* %d consequtive predictions achieved. Leaving the learning loop! *' % cnt_conseq_correct)
 print('********************************************************************')
 # pdb.set_trace()
 
+plt.figure("Validation F-score history")
+plt.title('F-1 macro of your model')
+plt.plot(range(n_queries + 1), scores)
+plt.scatter(range(n_queries + 1), scores)
+plt.xlabel('number of queries')
+plt.ylabel('score')
+plt.xlim([0, n_queries])
+plt.savefig(os.path.join(results_path, "f_history.png"))
+plt.show(block=False)
+
 # Evaluate the trained model, plot and save confusion matrix as image
-test_and_evaluate_model(clf, enc, X_test, y_test, names_test, photo_dir, weights_test, results_path)
+model.load_weights(os.path.join(results_path, weights_file_name))
+test_and_evaluate_model(model, enc, X_test, y_test, names_test, photo_dir, weights_test, results_path)
 
 with open(os.path.join(results_path, "active_labels.csv"), "w+") as f:
     f.write("\n".join([",".join(pair) for pair in new_labels]))

@@ -6,10 +6,10 @@ from sklearn.linear_model import LogisticRegression
 
 # Paths of the dataset and the csv file containing the labels
 photo_dir = "/media/shared_storage/datasets/my_photos/Sep21/texture_defects-windows"
-label_path = "/media/shared_storage/datasets/my_photos/Sep21/texture_defects-windows/malo_rodrigo_eva.csv"
+label_path = "/media/shared_storage/datasets/my_photos/Sep21/texture_defects-windows/malo_rodrigo_eva_jean-francois.csv"
 
 # Parameters to generate dataset
-expert = "Malo"  # Choose only the labels provided by this person if agreement_weights is 'None' or if there is not a majority label in the vector of labels for a single image
+expert = "Jean-François"  # Choose only the labels provided by this person if agreement_weights is 'None' or if there is not a majority label in the vector of labels for a single image
 agreement_weights = [1.0, 0.5, 0.25]  # Weights for consensus, majority, and expert tie-breaking in 'label_path'
 ignore_nd = True  # If True, samples with final label 'nd' will be ignored in the generated dataset
 only_consensus_images = True  # If True, the generated dataset will contain only samples with a consensual label between annotators

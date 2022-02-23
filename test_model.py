@@ -1,4 +1,4 @@
-model_results_path = "results_w3"
+model_results_path = "results_al"
 
 import os
 from shutil import copy

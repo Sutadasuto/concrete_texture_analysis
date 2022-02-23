@@ -115,6 +115,8 @@ def label_convention(label, labels_to_ignore):
         label = "decision-null"
     # if label == "micro-cracking":
     #     label = "shark-skin"
+    # if label == "shark-skin":
+    #     label = "tearing"
     if label.strip() in labels_to_ignore:
         return None
     return label

@@ -1,13 +1,7 @@
 import os
 from math import pi
 
-from sklearn.manifold import (
-    Isomap,
-    LocallyLinearEmbedding,
-    MDS,
-    SpectralEmbedding,
-    TSNE,
-)
+from sklearn.manifold import MDS, TSNE
 from sklearn.linear_model import LogisticRegression
 
 # Paths of the dataset and the csv file containing the labels
@@ -19,8 +13,9 @@ expert = "Malo"  # Choose only the labels provided by this person if agreement_w
 agreement_weights = [1.0, 0.5, 0.25]  # Weights for consensus, majority, and expert tie-breaking in 'label_path'
 ignore_nd = True  # If True, samples with final label 'nd' will be ignored in the generated dataset
 only_consensus_images = True  # If True, the generated dataset will contain only samples with a consensual label between annotators
-class_weight = 'balanced'  # None or 'balanced'
+class_weight = None  # None or 'balanced'. Weight each sample to give more importance to minority classes
 scale_features = True   # If True, the training features will be standardized according to the training split
+only_best_feats = True  # If True, recursive feature elimination will be done before training
 
 # Save results to this location
 results_path = "results"
@@ -60,7 +55,7 @@ props = ['contrast', 'dissimilarity', 'homogeneity', 'energy', 'correlation']  #
 
 # LBP parameters (number_of_features = len(ps) * len(radii) * bins)
 ps = [8]  # Number of neighbors to calculate the binary pattern. Transformed pixels have a value [0, 2^neighbors]
-radii = list(range(1, 21, 5))  # Offset radius from the pixel to its neighbors
+radii = list(range(1, 17, 5))  # Offset radius from the pixel to its neighbors
 standardize_lbp_image = True  # The input image is standardized from [μ-3.1σ, μ+3.1σ] to [0, lbp_levels-1] (see line below)
 lbp_levels = 11  # Number of intensity bins in the image used to calculate the LBP
 bins = 16  # The histogram of intensities from the transformed image is calculated using this number of bins
