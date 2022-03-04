@@ -76,7 +76,7 @@ else:
     best_feats = np.array([True] * X.shape[-1])
 
 ### Embedding techniques comparison
-embedding_techniques_comparison(X, y, names, embeddings, photo_dir, fig_size=(45, 22.5))
+embedding_techniques_comparison(X_train, y_train, names_train, embeddings, photo_dir, fig_size=(45, 22.5))
 plt.savefig(os.path.join(results_path, "2d_projection.png"))
 plt.show()
 

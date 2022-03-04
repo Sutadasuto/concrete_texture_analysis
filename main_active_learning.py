@@ -122,6 +122,7 @@ X_pool = X_pool[:, best_feats]
 ## Encode the class names to a [n_samples, n_classes] one-hot vector
 enc = OneHotEncoder(handle_unknown='ignore')
 enc.fit(y)
+dump(enc, os.path.join(results_path, "class_encoder.joblib"))
 y_train, y_test, y_pool = [enc.transform(y_train).toarray(), enc.transform(y_test).toarray(), enc.transform(y_pool).toarray()]
 ## Create callbacks
 # Early stop on validation loss plateau

@@ -1,4 +1,4 @@
-model_results_path = "results_al"
+model_results_path = "results_DORO"
 
 import os
 from shutil import copy
@@ -17,7 +17,7 @@ from utils import create_model
 # Replace variable values to match the new data on which the model will be tested
 # Paths of the dataset and the csv file containing the labels
 photo_dir = "/media/shared_storage/datasets/my_photos/Sep21/texture_defects-windows"
-label_path = "/media/shared_storage/datasets/my_photos/Sep21/texture_defects-windows/malo_rodrigo_eva-no_consensus.csv"
+label_path = "/media/shared_storage/datasets/my_photos/Sep21/texture_defects-windows/malo_rodrigo_eva_jean-francois-no_consensus.csv"
 
 # Parameters to generate dataset
 config_dict["photo_dir"] = photo_dir
